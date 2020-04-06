@@ -27,6 +27,7 @@ class PubSub {
 }
 
 const fs = require('fs')
+const http = require('http')
 
 fs.readFile('./a.json', 'utf8', (err, data) => {
     console.log(data.toString())
