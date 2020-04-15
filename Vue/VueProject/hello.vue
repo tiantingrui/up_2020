@@ -14,7 +14,7 @@ export default {
         return {
             title: 'Hello',
             description: 'hello, vue',
-            gender: 'male'
+            gender: 'male'   
         }
     }
 }
