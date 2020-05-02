@@ -1,5 +1,5 @@
-//* 工厂模式
-function Factor(typr) {
+//* 工厂模式基本结构
+function Factor(type) {
     switch (type) {
         case 'type1':
             return new Type1();
@@ -11,13 +11,3 @@ function Factor(typr) {
 }
 
 
-//* 建造者模式
-let Singleton = function(name) {
-    this.name = name
-}
-Singleton.getInstance = function(name) {
-    if (this.instance) {
-        return this.instance
-    }
-    return this.instance = new Singleton(name)
-}
