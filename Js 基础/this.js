@@ -9,3 +9,12 @@ let obj = {
     demo: demo
 }
 obj.demo()
+
+function aa (arr) {
+    const id = arr ? arr.join() : 123
+    console.log(id);
+}
+
+let list = [4,5]
+aa(list)
+aa()
