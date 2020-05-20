@@ -1,8 +1,8 @@
 /*
  * @Author: terry 
  * @Date: 2020-05-18 23:24:00 
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2020-05-20 13:53:29
+ * @Last Modified by: terry
+ * @Last Modified time: 2020-05-20 14:01:51
  */
 //! 根据Promise/A+ 规范实现promise，使用promise-aplus-tests插件验证。
 
@@ -22,7 +22,7 @@ const statusMap = {
 function fulfilledPromise(promise, value) {
     //! 只能从pending状态转换为其他状态
     if (promise.status !== statusMap.PENDING) {
-        return; 
+        return;
     }
     promise.status = statusMap.FULFILLED;
     promise.value = value;
@@ -32,21 +32,25 @@ function fulfilledPromise(promise, value) {
 function rejectedPromise(promise, reason) {
     //! 只能从pending状态转换为其他状态
     if (promise.status !== statusMap.PENDING) {
-        return; 
+        return;
     }
     promise.status = statusMap.REJECTED;
     promise.reason = reason;
     runCbs(promise.rejectedCbs, value); //* promise 状态改变
 }
+
 function runCbs(cbs, value) {
     cbs.forEach(cb => cb(value));
 }
+
 function isFunction(fn) {
     return Object.prototype.toString.call(fn).toLocaleLowerCase() === '[object function]';
 }
+
 function isObject(obj) {
     return Object.prototype.toString.call(obj).toLocaleLowerCase() === '[object object]';
 }
+
 function isPromise(p) {
     return p instanceof Promise;
 }
@@ -73,7 +77,7 @@ function resolvePromise(promise, x) {
             }, () => {
                 rejectedPromise(promise, x.reason);
             })
-            return 
+            return
         }
         return
     }
@@ -85,20 +89,20 @@ function resolvePromise(promise, x) {
             try {
                 then.call(x, (y) => {
                     if (called) {
-                        return 
+                        return
                     }
                     called = true
                     resolvePromise(promise, y)
                 }, (r) => {
                     if (called) {
-                        return 
+                        return
                     }
                     called = true
                     rejectedPromise(promise, r)
                 })
             } catch (error) {
                 if (called) {
-                    return 
+                    return
                 }
                 called = true
                 rejectedPromise(promise, error)
@@ -114,7 +118,7 @@ function resolvePromise(promise, x) {
         return
     }
 
-    
+
 }
 class Promise {
     constructor(fn) {
@@ -125,7 +129,7 @@ class Promise {
         this.rejectedCbs = []; //* then rejected cb
         fn((value) => {
             // fulfilledPromise(this, value);
-            resolvePromise(this, value); 
+            resolvePromise(this, value);
         }, (reason) => {
             rejectedPromise(this, reason);
         });
@@ -162,17 +166,17 @@ class Promise {
         }
         if (promise.status === statusMap.PENDING) {
             //! 这里对onFulfilled 和 onRejected 设置了默认值
-            onFulfilled = isFunction(onFulfilled)
-                ? onFulfilled
-                : (value) => {
+            onFulfilled = isFunction(onFulfilled) ?
+                onFulfilled :
+                (value) => {
                     return value;
                 };
-            onRejected = isFunction(onRejected)
-                ? onRejected
-                : (err) => {
+            onRejected = isFunction(onRejected) ?
+                onRejected :
+                (err) => {
                     throw err;
                 }
-    
+
             promise1.fulfilledCbs.push(() => {
                 //! 注意这里 push 的是一个方法
                 () => {
@@ -204,7 +208,7 @@ class Promise {
 }
 
 //* 测试用到的钩子
-Promise.deferred = function() {
+Promise.deferred = function () {
     const deferred = {};
     deferred.promise = new Promise((resolve, reject) => {
         deferred.resolve = resolve;
