@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import ListItem from './components/listItem'
+import {Route} from 'react-router-dom'
 
 const listData = [
   {
@@ -35,4 +36,17 @@ class App extends Comment {
   }
 }
 
+class App extends Component {
+  render() { 
+    return ( 
+      <div>
+        <Switch>
+          <Route path='/aa' component='aa' />
+          <Route path='/' component='Home' />
+        </Switch>
+      </div>
+     );
+  }
+}
+ 
 export default App;

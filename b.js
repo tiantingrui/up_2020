@@ -1,24 +1,26 @@
 let a = [
-    {
-        b: 1,
-        c: [{i: 1, j: 2}]
-    }
+    {s: 111, e: 111, d: 11},
+    {s: 112, e: 112, d: 11},
+    {s: 113, e: 113, d: 11},
+    {s: 22, e: 22, d: 22},
+    {s: 33, e: 33, d: 33}
 ]
-let obj = {
-    b: 2,
-    c: [{i: 1, j: 0}]
-}
-a.map(aItem => {
-    if (aItem.b === obj.b) {
-        aItem.c.map(cItem => {
-            obj.c.map(ins => {
-                if (cItem.i === ins.i) {
-                    // 这会将相同的对象属性给覆盖掉，不同的添加上
-                    Object.assign(cItem, ins)
-                }
-            })
-            return cItem
-        })
-    }
-    return aItem
-})
+let b = [
+    {s: 10, e: 10, d: 11},
+    {s: 20, e: 20, d: 22},
+    {s: 30, e: 30, d: 99}
+]
+let c = [
+    {s: 10, e: 10, d: 11},
+    {s: 20, e: 20, d: 22},
+    {s: 30, e: 30, d: 99},
+    {s: 33, e: 33, d: 33}
+]
+
+// a.map(aItem => {
+//     b.map(bItem => {
+//         if (bItem.d === aItem.d) {
+
+//         }
+//     })
+// })

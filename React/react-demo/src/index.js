@@ -3,12 +3,15 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.css'
+import registerServiceWorker from './regesterServiceWorker'
+import {BrowserRouter} from 'react-router-dom'
+
 
 // 创建一个react元素
 const element = <h1>Hello React</h1> 
 
 ReactDOM.render(
-    <App />, document.getElementById('root')
+    <BrowserRouter><App /></BrowserRouter>, document.getElementById('root')
 );
 
 // ReactDOM.render(
