@@ -164,3 +164,119 @@ for (let i = 1; i <= 10; i ++) {
 
 
 ## 2. Event Loop机制（微观角度看异步）
+
+**主要根据在浏览器环境下的Event Loop来说明**，node.js的EventLoop 后续node部分会讲到。
+
+首先，我们要明白异步是怎么去实现的：
+
+1. 宏观角度：是由于浏览器多线程
+2. 微观角度：Event Loop
+
+
+
+**异步的任务有两类**
+
++ 宏任务（普通任务 task）
+  + script
+  + setTimeout/setInterval(定时器)
+  + setImmediate(Node.js的一个方法)
+  + I/O操作
+  + UI rendering
++ 微任务（microtask）
+  + Promise
+  + Object.observe 监听对象变化的一个方法
+  + MutationObserver 是一个类，可以监听DOM结构变化
+  + postMessage Window对象之间用来通信
+
+
+
+**Event Loop执行顺序**
+
+1. 首先执行script，script被称为全局任务，也属于macrotask(宏任务)
+2. 当script这个macrotask（宏任务）执行完以后，再去执行所有的微任务
+3. 然后再去取任务队列中取宏任务一个一个执行
+
+
+
+**注意**
+
++ 一个Event Loop 有一个或多个task queue
+
++ 每个Event Loop 有一个 Microtask queue
+
+  
+
+## 3. 异步编程方法-发布/订阅
+
+  首先呢，我们要先去知道，**异步编程的方法有哪些？**
+
++ 回调函数
++ 事件发布/订阅
++ Promise
++ generator函数
++ async函数
+
+我们一个一个的来讲述，回调函数大家很常用，直接开始事件发布/订阅这个异步编程方法。
+
+
+
+**那么如何理解发布/订阅呢？**
+
+有三个核心概念我们得了解一下
+
++ publish(发布者)
++ Event Center（事件中心）
++ SubScriber(订阅者)
+
+```js
+1. 首先发布者 发布消息到 事件中心
+2. 然后订阅者 从事件中心 订阅消息
+3. 订阅者可以有多个
+```
+
+
+
+**如何实现一个事件的发布/订阅呢？**
+
+```js
+class PubSub {
+    constructor() {
+        // 用对象来存储，是因为事件的名字和事件的处理函数用对象可以很方便的对应起来
+        this.events = {}
+    }
+    publish(eventName, data) {
+        if (this.events[eventName]) {
+            this.events[eventName].forEach(cb => {
+                cb.apply(this, data)
+            })
+        }
+    }
+    subscribe(eventName, cb) {
+        if (this.events[eventName]) {
+            this.events[eventName].push(cb)
+        } else {
+            this.events[eventName] = [cb]
+        }
+    }
+    // 取消订阅
+    unSubscribe(eventName, cb) {
+        if (this.events[eventName]) {
+            this.events[eventName] = this.events[eventName].filter(item => item !== cb)
+        } 
+    }
+}
+```
+
+**优点**
+
++ 松耦合
++ 灵活
+
+**缺点**
+
++ 无法确保消息被触发或者触发几次
+
+
+
+## 4. promise
+
