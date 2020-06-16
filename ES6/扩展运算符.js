@@ -15,3 +15,6 @@ arr1.push(...arr2)
 
 let date1 = new Date(...[2015, 1, 1]);
 console.log([...'hello'])
+
+
+
