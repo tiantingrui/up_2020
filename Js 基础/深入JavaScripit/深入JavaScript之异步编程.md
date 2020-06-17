@@ -280,3 +280,321 @@ class PubSub {
 
 ## 4. promise
 
+我们先来看一看**promise/A+ 规范**。
+
+### 术语
+
++ promise
+
+> 一个有then方法的对象或者函数，行为符合本规范
+
++ thenable
+
+> 一个定义了then方法的对象或函数
+
++ 值（value）
+
+> 任何JavaScript的合法值
+
++ 异常（exception）
+
+> throw语句抛出的值
+
++ 拒绝原因（reason）
+
+> 表示一个promise的拒绝原因
+
+
+
+### **promise的状态**
+
+- pending--等待
+- fulfilled--完成
+- rejected--拒绝
+
+```
+state: pending
+1.	value --> state: fulfilled
+2.	reason --> state: rejected
+```
+
+
+
+### then方法
+
+> 一个promise必须提供一个then方法来访问其当前值、终值和拒因
+
+promise的then方法接受两个参数
+
+```js
+const promise2 = promise1.then(onFulfilled, onRejected)
+```
+
+#### 1. 参数
+
+onFulfilled 和 onRejected都是**可选参数**
+
+如果onFulfilled不是函数，其必须被忽略
+
+如果onRejected不是函数，其必须被忽略
+
+```
+onFulfilled 不是函数,promise1的状态是fulfilled
+state:fulfilled
+value:同promise1
+
+onFulfilled 不是函数,promise1的状态是rejected
+state:rejected
+value:同promise1
+
+onFulfilled或者onRejected 是一个函数
+return x
+进入解析过程
+```
+
+#### 2. onFulfilled特性
+
+如果onFulfilled是函数：
+
+当promise执行结束后其必须被调用，其第一个参数为promise的终值
+
+在promise执行结束前其不可被调用
+
+其调用次数不可超过一次
+
+#### 3. onRejected特性
+
+如果onRejected是函数：
+
+当promise被拒绝执行后其必须被调用，其第一个参数为promise的拒因
+
+在promise被拒绝执行前其不可被调用
+
+其调用次数不可超过一次
+
+#### 4. 多次调用
+
+then方法可以被同一个promise调用多次
+
+- 当 `promise` 成功执行时，所有 `onFulfilled` 需按照其注册顺序依次回调
+- 当 `promise` 被拒绝执行时，所有的 `onRejected` 需按照其注册顺序依次回调
+
+#### 5. 注意事项
+
++ onFulfilled和onRejected必须被作为函数调用
++ onFulfilled在promise完成后被调用，onRejected在promise被拒绝执行后调用
++ onFulfilled和onRejected只被调用一次
++ 如果参数不是一个函数，直接被忽略掉（Promise.resolve(1).then(Promise.resolve(3)）
+
+#### 6. 返回
+
+```js
+const promise2 = promise1.then(onFulfilled, onRejected)
+```
+
+```
+onFulfilled 不是函数,promise1的状态是fulfilled
+state:fulfilled
+value:同promise1
+
+onFulfilled 不是函数,promise1的状态是rejected
+state:rejected
+value:同promise1
+
+onFulfilled或者onRejected 是一个函数
+return x
+进入解析过程
+```
+
+
+
+### promise的解析过程
+
+**先抽象出一个模型resolove(promise, x)**
+
+##### 1. x 与 promise 相等
+
+如果 `promise` 和 `x` 指向同一对象，以 `TypeError` 为据因拒绝执行 `promise`
+
+##### 2. x 为 promise
+
+如果 `x` 为 Promise ，则使 `promise` 接受 `x` 的状态
+
+- 如果 `x` 处于等待态， `promise` 需保持为等待态直至 `x` 被执行或拒绝
+- 如果 `x` 处于执行态，用相同的值执行 `promise`
+- 如果 `x` 处于拒绝态，用相同的据因拒绝 `promise`
+
+##### 3. x 为对象或者函数
+
+如果 `x` 为对象或者函数：
+
+把 `x.then` 赋值给 `then`
+
+- 如果取 `x.then` 的值时抛出错误 `e` ，则以 `e` 为据因拒绝 `promise`
+- 如果`then`是函数，将`x`作为函数的作用域`this`调用之。传递两个回调函数作为参数，第一个参数叫做`resolvePromise`，第二个参数叫做`rejectPromise`:
+  - 如果 `resolvePromise` 以值 `y` 为参数被调用，则运行 `[[Resolve]](promise, y)`
+  - 如果 `rejectPromise` 以据因 `r` 为参数被调用，则以据因 `r` 拒绝 `promise`
+  - 如果 `resolvePromise` 和 `rejectPromise` 均被调用，或者被同一参数调用了多次，则优先采用首次调用并忽略剩下的调用
+
+- 如果调用`then`方法方法抛出了异常`e`
+  - 如果 `resolvePromise` 或 `rejectPromise` 已经被调用，则忽略之
+  - 否则以 `e` 为据因拒绝 `promise`
+- 如果 `then` 不是函数，以 `x` 为参数执行 `promise`
+
+##### 4. x 不为对象或函数
+
+如果 `x` 不为对象或者函数，以 `x` 为参数执行 `promise`
+
+
+
+那么我们来实现以下这个解析过程吧
+
+```js
+import { isObject, isFunction } from "util"
+//! promise 解析过程
+function resolve(promise, x) {
+    if (x === promise) {
+        return reject(promise, new TypeError('cant be the same'))
+    }
+    if (isPromise(x)) {
+        if (x.state === 'pending') {
+            return x.then(() => {
+                resolve(promise, x.value)
+            }, () => {
+                reject(promise, x.value)
+            })
+        }
+        if (x.state === 'fulfilled') {
+            return fulfill(promise, x.value)
+        }
+        if (x.state === 'rejected') {
+            return reject(promise, x.value)
+        }
+    } else if (isObject(x) || isFunction(x)) {
+        let then;
+        try {
+            then = x.then
+        } catch (e) {
+            return reject(promise, e)
+        }
+        if (isFunction(then)) {
+            let isCalled = false;
+            try {
+                then.call(x, function resolvePromise(y) {
+                    if (isCalled) {
+                        return 
+                    }
+                    isCalled = true
+                    resolve(promise, y)
+                }, function rejectPromise(r) {
+                    if (isCalled) {
+                        return
+                    }
+                    isCalled = true
+                    reject(promise, r)
+                })
+            } catch (e) {
+                if (!isCalled) {
+                    reject(promise, e)
+                }
+            }
+        } else {
+            return fulfill(promise, x)
+        }
+    
+    } else {
+        return fulfill(promise, x)
+    }
+}
+```
+
+
+
+接下来我们来看一下**ES6 Promise API**
+
+### ES6 Promise API
+
+#### **Promise构造函数**
+
+| 构造函数                                   | 说明                                                       |
+| ------------------------------------------ | ---------------------------------------------------------- |
+| new Promise(function(resolve, reject) { }) | 函数作为参数                                               |
+|                                            | resolve函数将promise状态从pending变成resolved（fulfilled） |
+|                                            | reject函数将promise状态从pending变成rejected               |
+
+#### **静态方法**
+
+| 方法                            | 说明                                                         |
+| ------------------------------- | ------------------------------------------------------------ |
+| Promise.resolve(param)          | 等同于 new Promise(function(resolve, reject){resolve(param)}) |
+| Promise.reject(reason)          | 等同于 new Promise(function(resolve, reject){reject(reason)}) |
+| Promise.all([p1,...,pn])        | 输入一组promise返回一个新的promise,全部promise都是fulfilled结果才是fulfilled状态 |
+| Promise.allSettled([p1,...,pn]) | 输入一组promise返回一个新的promise,所有的promise都是fulfilled结果才是fulfilled状态 |
+| Promise.race([p1,...,pn])       | 输入一组promise返回一个新的promise,结果promise的状态根据第一个变化的promise状态 |
+
+#### **Promise实例方法**
+
+| 方法                                         | 说明                                                         |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| promise.then(onFulfilled,onRejected)         | promise 状态改变之后的回调，返回新的promise对象              |
+| promise.catch(function(reason) {})           | 同promise.then(null, onRejected),promise状态为rejected的回调 |
+| promise.finally(function(reason) { // test}) | 同promise.then(function(){ // test}, function(){ // test})，不管promise状态如何都会执行 |
+
+**注意点**
+
+- then、catch返回的promise是新的promise，不是原来的promise。
+- Promise对象的错误会“冒泡”，直到捕获为止，错误会被下一个catch语句捕获。
+
+所以说写catch的时候只需要在链式调用的最后面加一个catch语句去捕获就可以。
+
+### 最佳实践
+
++ 不要忘记catch捕捉错误
++ then方法中使用return
++ 传递函数给then方法
++ 不要把promise写成嵌套
+
+#### 来实战一下
+
+**题目：**3秒之后亮一次红灯，再过两秒亮一次绿灯，再过一秒亮一次黄灯，用promise 实现多次交替亮灯的效果，console.log 模拟亮灯
+
+```js
+// 思路拆解：
+// 1.多少秒后亮某个颜色的灯
+// 2.顺序亮一批灯
+// 3.循环顺序亮一批灯
+
+function light(color, second) {
+    return new Promise(function(resolve, reject) {
+        setTimeout(() => {
+            console.log(color)
+            resolve()
+        }, second * 1000)
+    })
+}
+
+function orderLights(list) {
+    let promise = Promise.resolve()
+    list.forEach(item => {
+        promise = promise.then(() => {
+            return light(item.color, item.second)
+        })
+    })
+    promise.then(function() {
+        return orderLights(list)
+    })
+}
+
+const list = [
+    {color: 'red', second: 3},
+    {color: 'green', second: 2},
+    {color: 'yellow', second: 1},
+]
+
+orderLights(list)
+```
+
+
+
+## 5. Generator函数及其异步应用
+
