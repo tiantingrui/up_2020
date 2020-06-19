@@ -598,3 +598,340 @@ orderLights(list)
 
 ## 5. Generator函数及其异步应用
 
+#### Generator函数
+
+首先先来看两个概念
+
+##### 迭代器
+
++ 有next方法，执行返回结果对象
++ 结果对象
+  + value
+  + done
+
+```js
+function createIterator(items) {
+    var i = 0;
+    return {
+        next: function() {
+            var done = i >= items.length
+            var value = !done ? items[i++] : undefined
+            return {
+                done, 
+                value
+            }
+        }
+    }
+}
+```
+
+##### 可迭代协议
+
++ [Symbol.iterator]属性
++ 内置可迭代对象
+  + String Array Map Set 等
+
+
+
+##### 迭代器协议
+
++ next方法
+  + done
+  + value
+
+
+
+##### 生成器
+
+**Generator函数（生成器）**
+
++ ES6异步编程解决方案
++ 声明：通过function*声明
++ 返回值：符合可迭代协议和迭代器协议的生成器对象
++ 特点：在执行时能暂停，又能从暂停处继续执行
+
+执行Generator函数生成一个生成器对象
+
+
+
+##### 生成器对象的原型上有三个方法
+
++ next(param)
++ return(param)
++ throw(param)
+
+
+
+##### yield
+
++ 只能出现在Generator函数里
++ 用来暂停和恢复生成器函数
+
++ **next执行**
+  + 遇到yield暂停，将紧跟yield表达式的值作为返回的对象的value
+  + 没有yield，一直执行到return，将return的值作为返回的对象的value
+  + 没有return，将undefined作为返回的对象的value
++ **next参数**
+  + next方法可以带一个参数，该参数会被当做上一个yield表达式的返回值
+
+
+
+##### generator函数运行流程如下：
+
+```js
+function* createGenerator() {
+    let first = yield 1
+    let second = yield first + 2
+    yield second + 3
+}
+
+let gen = createGenerator();
+
+let g1 = gen.next()  // {value: 1, done: false}
+let g2 = gen.next(4) // {value: 6, done: false}
+let g3 = gen.next(5) // {value: 8, done: false}
+let g4 = gen.next()  // {value: undefined, done: true}
+```
+
+yield生成器函数 / 可迭代对象
+
++ 委托给其他可迭代对象
++ 作用：复用生成器（多个生成器同时使用）
+
+举个栗子
+
+```
+function* generator1() {
+    yield 1;
+    yield 2;
+}
+
+function* generator2() {
+    yield 100;
+    yield* generator1();
+    yield 200;
+}
+
+let g = generator2()
+g.next() //? { value: 100, done: false }
+g.next() //? { value: 1, done: false }
+g.next() //? { value: 2, done: false }
+g.next() //? { value: 200, done: false }
+g.next() //? { value: undefined, done: true }
+```
+
+**return(param)**
+
+- 给定param值终结遍历器，param可缺省。
+
+```
+//! return(param)
+function* createIterator() {
+    yield 1;
+    yield 2;
+    yield 3;
+}
+let iterator = createIterator();
+
+iterator.next(); // { value: 1, done: false }
+iterator.return();// { value: undefined, done: true }
+iterator.next();// { value: undefined, done: true }
+```
+
+**throw(param)**
+
+- 让生成器对象内部抛出错误，走到try,catch语句中
+
+```
+//! throw(param)
+function* createIterator() {
+    let first = yield 1;
+    let second;
+    try{
+        second = yield first + 2;
+    } catch (e) {
+        second = 6;
+    }
+    yield second + 3
+}
+let iterator = createIterator();
+
+console.log(iterator.next());   // { value: 1, done: false }
+console.log(iterator.next(10));  // { value: 12, done: false }
+console.log(iterator.throw(new Error('error'))); // { value: 9, done: false }
+console.log(iterator.next()); // { value: undefined, done: true }
+```
+
+
+
+接下来我们来看一下**generator函数的实现原理**
+
+首先先得了解找一个概念
+
+##### 协程
+
+> 介绍协程：https://cnodejs.org/topic/58ddd7a303d476b42d34c911
+
++ 一个线程存在多个协程，但同时只能执行一个
++ Generator函数式协程在ES6的实现
++ yield挂起x 协程（交给其他协程），next唤醒 x协程
+
+
+
+##### Generator函数应用
+
+> 耦合程度还是挺高的
+
+
+
+#### Thunk函数
+
++ **求值策略**  传值调用，传名调用 sum(x+1, x+2)
++ thunk函数是传名调用的实现方式之一
++ 可以实现自动执行Generator函数
+
+
+
+举个栗子
+
+```js
+const fs = require('fs');
+const Thunk = function(fn) {
+    return function(...args) {
+        return function(callback) {
+            return fn.call(this, ...args, callback)
+        }
+    }
+}
+
+const readFileThunk = Thunk(fs.readFile);
+
+function run(fn) {
+    var gen = fn();
+    function next(err, data) {
+        var result =gen.next(data);
+        if (result.done) return;
+        result.value(next);
+    }
+    next()
+}
+
+const g = function*() {
+    const s1 = yield readFileThunk('./g1.json')
+    console.log(s1.toString());
+    const s2 = yield readFileThunk('./g2.json')
+    console.log(s2.toString());
+    const s3 = yield readFileThunk('./g3.json')
+    console.log(s3.toString());
+}
+
+run(g);
+```
+
+
+
+#### co模块
+
+> co模块是generator函数的自动执行器，功能类似与Thunk函数作用
+>
+> co源码：https://github.com/tj/co
+
+
+
+### 6. 深入理解async/await
+
+#### async函数
+
++ 是一个语法糖，使异步操作更简单
++ 返回值 是一个 promise对象
+  + return的值是promise  resolved时候的value
+  + throw的值是promise rejected时候的reason
+
+```js
+async function test() {
+    return 1;
+}
+const p = test();
+console.log(p);  // Promise { 1 }
+p.then(function (data) {
+    console.log(data) // 1
+})
+
+async function test() {
+    throw new Error('error')
+}
+const p = test();
+console.log(p); 
+p.catch(function (data) {
+    console.log(data) 
+})
+```
+
+#### await
+
++ 只能出现在async函数内或者最外层
++ 等待一个promise对象的值
++ await的promise状态为rejected，后续执行中断
+
+```
+await
+1. promise
+	1> resolved 返回promise的值
+	2> rejected 抛出promise的拒因
+	
+2. 非promise
+	1> 返回对应的值  await 1
+```
+
+
+
+#### async函数实现原理
+
+**Generator + 自动执行器**
+
+```
+// async函数实现原理
+async function example(params) {
+    // ...
+}
+
+function example(params) {
+    return spawn(function*() {
+        // ...
+    })
+}
+
+function spawn(genF) {
+    return new Promise(function(resolve, reject) {
+        const gen = genF(); // 生成器对象
+        function step(nextF) {
+            let next;
+            try {
+                next = nextF(); //执行gen.next()
+            } catch (e) {
+                return reject(e)
+            }
+            if (next.done) {
+                return resolve(next.value)
+            }
+            //* next.done 为 false时，继续step;
+            Promise.resolve(next.value).then(
+                function(v) {
+                    step(function() {
+                        return gen.next(v)
+                    })
+                },
+                function(e) {
+                    stop(function() {
+                        return gen.throw(e)
+                    })
+                }
+            )
+        }
+        step(function() {
+            return gen.next(undefined)
+        })
+    })
+}
+```
+
