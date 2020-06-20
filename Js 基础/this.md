@@ -1,14 +1,30 @@
 # this
 
-> JavaScript 中 this 的指向
++ **全局环境中的this**
++ **函数中的this**
 
 
+
+## 全局环境中的this
+
+**全局环境中的this指向全局对象**
+
+```js
+console.log(this === window)  // true
+
+this.abc = 'abc'
+console.log(window.abc) // 'abc'
+```
+
+
+
+## 函数中的this
 
 #### 1.在一般函数中，指向global全局对象
 
 ```js
 function demo() {
-    console.log(this);
+    console.log(this); // window
 }
 demo()
 ```
@@ -22,23 +38,76 @@ demo()
 
 ```js
 let obj = {
-    demo: demo
+    f() {
+        console.log(this) // obj
+        function g() {
+            console.log(this) // window
+        }
+        g()
+    }
 }
-obj.demo() // this 指向 obj
+obj.f()
 ```
 
 
 
-### 3.作为构造函数，this指代 new 出的实例对象
+### 3.作为构造函数，
+
++ **构造函数中没有return , 或者return 了 this** ,  **this指向 new 出的实例对象**
 
 ```js
+// 构造函数中无return
 function P () {
     this.x = 1
 }
 let p1 = new P()
+console.log(p1.x) // 1
 p1.x = 2
-console.log('p1', p1.x); // p1  x
+console.log(p1.x) // 2
 
+// 构造函数 return this
+function P () {
+    this.x = 1
+    return this
+}
+console.log(p1.x) // 1
+p1.x = 2
+console.log(p1.x) // 2
+```
+
++ **构造函数中return 一个对象，this 指向了这个return回去的对象**
+
+```js
+let obj = {
+    a: 'b'
+}
+function C() {
+    this.a = 'a'
+    this.b = 'b'
+    return obj
+}
+let o = new C() 
+console.log(o) // {a: 'b'}
+console.log(o.a) // 'b'
+console.log(o === obj) // true
+```
+
++ **ES6 中的class是构造函数的语法糖**
+
+```js
+let obj = {
+    a: 'b'
+}
+class C {
+    constructor() {
+        this.a = 'a'
+        this.b = 'b'
+        return obj
+    }
+}
+let c = new C()
+console.log(c) // {a : 'b'}
+console.log(c.a) // b
 ```
 
 
@@ -56,6 +125,22 @@ var o={};
 o.x = 1;
 o.m = test;
 o.m.apply(); //0
+```
+
+栗子二：
+
+```js
+let obj = {
+    f() {
+        console.log(this) // obj
+        function g() {
+            console.log(this) // obj
+        }
+        g.call(this) // this 指向 obj
+        // g.apply(this)
+    }
+}
+obj.f()
 ```
 
 

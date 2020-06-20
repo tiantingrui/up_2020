@@ -1,26 +1,13 @@
-let a = [
-    {s: 111, e: 111, d: 11},
-    {s: 112, e: 112, d: 11},
-    {s: 113, e: 113, d: 11},
-    {s: 22, e: 22, d: 22},
-    {s: 33, e: 33, d: 33}
-]
-let b = [
-    {s: 10, e: 10, d: 11},
-    {s: 20, e: 20, d: 22},
-    {s: 30, e: 30, d: 99}
-]
-let c = [
-    {s: 10, e: 10, d: 11},
-    {s: 20, e: 20, d: 22},
-    {s: 30, e: 30, d: 99},
-    {s: 33, e: 33, d: 33}
-]
-
-// a.map(aItem => {
-//     b.map(bItem => {
-//         if (bItem.d === aItem.d) {
-
-//         }
-//     })
-// })
+let obj = {
+    a: 'b'
+}
+class C {
+    constructor() {
+        this.a = 'a'
+        this.b = 'b'
+        return obj
+    }
+}
+let c = new C()
+console.log(c)
+console.log(c.a)
