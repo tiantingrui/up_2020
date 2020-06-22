@@ -12,6 +12,7 @@ function createIterator(items) {
     }
 }
 
+
 function* createGenerator() {
     let first = yield 1
     let second = yield first + 2

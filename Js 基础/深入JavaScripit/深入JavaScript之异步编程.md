@@ -838,7 +838,7 @@ run(g);
 
 
 
-### 6. 深入理解async/await
+## 6. 深入理解async/await
 
 #### async函数
 
