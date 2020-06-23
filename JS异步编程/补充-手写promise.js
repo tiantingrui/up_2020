@@ -2,7 +2,7 @@
  * @Author: terry 
  * @Date: 2020-05-18 23:24:00 
  * @Last Modified by: terry
- * @Last Modified time: 2020-06-17 13:37:17
+ * @Last Modified time: 2020-06-23 22:38:13
  */
 //! 根据Promise/A+ 规范实现promise，使用promise-aplus-tests插件验证。
 
