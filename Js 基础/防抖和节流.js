@@ -1,4 +1,4 @@
-let /**
+/**
  *降频函数
  *这个 debounce 函数在给定的时间间隔内只允许你提供的回调函数执行一次，以此降低它的执行频率。
  *调用:	debounce(function() {}, 250) 
@@ -44,3 +44,4 @@ let throttle = (fn, delay) => {
         }, delay)
     }
 }
+
