@@ -1,8 +1,3 @@
-# Vuex响应式原理&模块化
-
-### vuex响应式原理
-
-```js
 class Store {
     constructor(options = {}) {
         let { state, mutations, plugins } = options
@@ -30,5 +25,3 @@ class Store {
         }
     }
 }
-```
-
