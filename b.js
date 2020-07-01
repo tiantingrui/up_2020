@@ -1,30 +1,21 @@
-let obj = {
-    a: 'b'
+function A() {
+    this.name = 'terry'
 }
-class C {
-    constructor() {
-        this.a = 'a'
-        this.b = 'b'
-        return obj
-    }
-}
-let c = new C()
-// console.log(c)
-// console.log(c.a)
 
-var a = 1
+let a = new A()
 
-var a= 3
+console.log('A构造函数的 __proto__', A.__proto__)
+console.log('A构造函数的 __proto__的constructor', A.__proto__.constructor)
+console.log('A构造函数的 __proto__的constructor的__proto__', A.__proto__.constructor.__proto__)
+console.log('A构造函数的 __proto__的constructor的prototype', A.__proto__.constructor.prototype)
+console.log(`A构造函数的原型的原型`, A.__proto__.__proto__)
+console.log(`A构造函数的原型的原型的构造函数`, A.__proto__.__proto__.constructor)
+console.log(`A构造函数的原型的原型的原型`, A.__proto__.__proto__.__proto__)
+console.log(`实例a 的 __proto__`, a.__proto__)
+console.log(`实例a 的 __proto__的prototype`, a.__proto__.prototype)
+console.log(`实例a 的 原型的原型`, a.__proto__.__proto__)
+console.log(`实例a 的 原型的原型的原型`, a.__proto__.__proto__.__proto__)
 
-// console.log(a)
+console.log(a.constructor)
 
-let b = 1
-// let b = 2
-// console.log(b);
-
-var x = 'abc'
-console.log(x[1]);
-
-var s = 'ABC'
-s.toLowerCase('')
-console.log(s)
+var a = 'terry'
