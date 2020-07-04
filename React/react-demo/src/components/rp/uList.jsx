@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 
 class UList extends Component {
-    state = {  }
     render() { 
-        return (  );
+        return ( <h1> Hello React! </h1> );
     }
 }
  

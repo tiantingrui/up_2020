@@ -4,7 +4,7 @@ import WithTooltip from './withTooltip'
 // sfc
 const ItemC = (props) => {
     return ( 
-        <div className='container'>
+        <div className='container'> 
             <WithTooltip render={ ( { showTooltip, content } ) => {
                 <div>
                 <button className='btn btn-primary' type='btn'> TooltipC </button>
