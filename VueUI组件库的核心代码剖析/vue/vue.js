@@ -114,3 +114,10 @@ class Observe {
         }
     }
 }
+
+class Dep {
+    constructor(value) {
+        this.subs = []
+    }
+}
+
