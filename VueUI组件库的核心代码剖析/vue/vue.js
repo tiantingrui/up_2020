@@ -119,5 +119,20 @@ class Dep {
     constructor(value) {
         this.subs = []
     }
+
+    addDep(sub) {
+        this.subs.push(sub)
+    }
+
+    removeDep(sub) {
+        remove(this.subs, sub)
+    }
 }
 
+
+function remove(arr, item) {
+    const index = arr.indexOf(item)
+    if (index > -1) {
+        arr.splice(index, 1)
+    }
+}

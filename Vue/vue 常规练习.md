@@ -254,7 +254,7 @@ C. prerendering
 D. prefetch
 
 ```txt
-解析：
+解析：(A,B,C,D)
 课程介绍过以上几种方式均能提升同构应用的性能
 ```
 
