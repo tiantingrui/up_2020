@@ -15,4 +15,19 @@ let newObj = new Proxy(obj, {
     }
 })
 
-console.log(newObj.name)
+const timeArr = [
+    {'id':'A01','date':'2016-04-20 23:22:11'},
+    {'id':'A02','date':'2016-04-21 21:00:11'},
+    {'id':'A03','date':'2016-04-23 22:00:22'},
+    {'id':'A04','date':'2016-04-19 12:22:00'},
+    {'id':'A05','date':'2016-02-19 11:11:00'}
+]
+
+function sortDataArray(dataArray){
+    return dataArray.sort(function(a,b) {
+        return Date.parse(b.date.replace(/-/g,"/"))-Date.parse(a.date.replace(/-/g,"/"));
+    });
+}
+
+console.log(sortDataArray(timeArr))
+
