@@ -1,0 +1,46 @@
+.App {
+}
+
+.logo {
+  width: 120px;
+  height: 31px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px 28px 16px 0;
+  float: left;
+}
+
+.login-content{
+  width: 400px;
+  margin: 100px auto 0;
+}
+
+.not-found{
+  width: 949px;
+  height: 518px;
+  margin : 0 auto;
+  background: url(./img/notfound.png) 0 0 no-repeat;
+  background-size: 100% 100%;
+}
+
+.home{
+  width: 100%;
+  min-height: 800px;
+  background: url(./img/bg.png) center 0 no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.home .enter-btn{
+  position: absolute;
+  top: 60%;
+  left: 47%;
+}
+
+.login-btn{
+  float: right;
+  margin-right: 30px;
+}
+
+.admin-title{
+  color: aliceblue;
+}
