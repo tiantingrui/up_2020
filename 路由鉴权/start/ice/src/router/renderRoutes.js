@@ -25,6 +25,7 @@ const renderRoutes = (routes, switchProps = {}) => {
       )
     }
   });
+
   
   return (
     <Switch {...switchProps}>
