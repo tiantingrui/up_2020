@@ -3,6 +3,7 @@
 //* app.listen()
 
 const http = require('http');
+const { setTimeout } = require('timers');
 
 class Koa {
     middleware = () => {}
@@ -188,7 +189,13 @@ class Promise {
                     }
                 }, 0);
             })
+
+            promise1.rejectedCbs.push(() => {
+                
+            })
         }
         return promise2
     }
 }
+
+
