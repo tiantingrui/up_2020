@@ -254,7 +254,7 @@ let message1 = 'Multuline\nsting'
 let message2 = String.raw'Multuline\nsting' // 'Multuline\nsting'
 ```
 
-#### 
+
 
 ## 2. 作用域
 
