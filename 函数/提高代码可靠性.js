@@ -66,4 +66,5 @@ const list = [
     }
 ]
 
+
 orderLights(list)
