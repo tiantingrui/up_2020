@@ -41,3 +41,5 @@ function compiler(input) {
     let output = codeGenerator(newAst)
     return output
 }
+
+
