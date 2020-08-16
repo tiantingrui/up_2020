@@ -14,7 +14,8 @@ program
     .option('-d --depths <level>', 'git clone depths')
     .description('clone a repository into a newly created directory')
     .action((source, destination, cmdObj) => {
+
         // ...
-    })
+    }) 
 
 program.parse(process.argv)
