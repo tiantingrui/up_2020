@@ -118,7 +118,7 @@ export class Observe {
         }
     }
 }
-
+ 
 function protoAugment(target, src, keys) {
     target.__proto__ = src
 }
