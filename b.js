@@ -154,6 +154,7 @@ class Promise {
                 }
             }, 0)
         }
+
         if (promise1.status === statusMap.REJECTED) {
             if (!isFunction(onRejected)) {
                 return promise1
