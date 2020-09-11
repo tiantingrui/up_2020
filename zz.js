@@ -16,5 +16,5 @@ const server = net.createServer(socket => {
 
 
 server.listen(80, () => {
-    
+    console.log('serve is running 3000')
 })
