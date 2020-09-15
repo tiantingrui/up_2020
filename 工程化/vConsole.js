@@ -28,3 +28,9 @@ myPlugin.on('addTool', (callback) => {
 
 // 4. Add to vConsole
 vConsole.addPlugin(myPlugin)
+
+
+
+
+
+
