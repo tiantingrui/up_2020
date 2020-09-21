@@ -88,10 +88,8 @@ function merge( /* obj1, obj2, obj3, ... */ ) {
 }
 
 
-
-
 module.exports = {
     forEach: forEach,
     extend: extend,
     merge: merge
-}
+} 
