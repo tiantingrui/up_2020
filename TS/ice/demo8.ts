@@ -1,0 +1,68 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: terry
+ * @Date: 2020-09-28 09:36:18
+ * @LastEditors: terry
+ * @LastEditTime: 2020-09-28 10:21:46
+ */
+
+ // interface 必须为一个对象
+interface Girl {
+    name: string,
+    age: number,
+    bust: number,
+    waistline?: number,  // 可选值
+    [propName: string]: any,
+    say(): string 
+}
+
+
+// 接口的继承
+interface Teacher extends Girl {
+    teach(): string
+}
+
+// 接口不仅可以限制对象，也可以限制 类
+class Terry implements Girl {
+    name: 'terry'
+    age: 24
+    bust: 110
+    say() {
+        return 'ice'
+    }
+}
+
+const girl = {
+    name: 'zmn',
+    age: 18,
+    bust: 95,
+    waistline: 28,
+    sex: 'female',
+    say() {
+        return 'hello'
+    },
+    teach() {
+        return 'teach web front technology'
+    }
+}
+
+// 类型别名可以是其他比如 string \ number ...
+type Girl1 = string
+
+ 
+const resume = (girl: Girl) => {
+    girl.age < 24 && girl.bust >= 90 && console.log(girl.name + '进入面试')
+    girl.age >= 24 || girl.bust < 90 && console.log(name + '你被淘汰了')
+}
+
+resume(girl)
+
+const getResume =  (girl: Teacher) => {
+    console.log(girl.name + '年龄是' + girl.age)
+    console.log(girl.name + 'bust' + girl.bust)
+    girl.waistline && console.log(girl.name + '腰围是' + girl.waistline)
+    girl.sex && console.log(girl.name + '性别是' + girl.sex)
+}
+
+getResume(girl) 
