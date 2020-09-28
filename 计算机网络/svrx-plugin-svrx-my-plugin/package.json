@@ -1,0 +1,40 @@
+{
+  "name": "svrx-plugin-svrx-my-plugin",
+  "version": "0.0.1",
+  "description": "The svrx plugin for svrx-my-plugin",
+  "main": "index.js",
+  "keywords": [
+    "svrx",
+    "svrx-plugin",
+    "svrx-my-plugin"
+  ],
+  "engines": {
+    "svrx": ""
+  },
+  "author": "terry <'976912095@qq.com'>",
+  "scripts": {
+    "start": "node ./example/start.js",
+    "test": "mocha",
+    "lint": "eslint \"**/*.js\"",
+    "lint:fix": "eslint \"**/*.js\" --fix",
+    "prepublishOnly": "npm run lint && npm run test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@svrx/eslint-config": "^1.0.0",
+    "@svrx/util": "^1.1.4",
+    "eslint": "^6.2.0",
+    "husky": "^3.0.4",
+    "lint-staged": "^9.2.3",
+    "mocha": "^6.2.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint --fix"
+  },
+  "license": "MIT"
+}
