@@ -148,12 +148,14 @@
 ### 效率插件
 
 + **A-super-comprehensive** - 帮你自动写好参数，很提高效率，像idea一样，很赞
-
 + **Better Comments** - 编写更加人性化的注释
-
 + **Rest CLient**  - 发送REST风格的HTTP请求
-
-  
++ [Parameter Hints](https://marketplace.visualstudio.com/items?itemName=DominicVonk.parameter-hints) - 这个可以把参数类型显性出来,更有IDE的感觉了,
+  我很喜欢这个插件(TS&JS都支持)
++ [Template String Converter](https://marketplace.visualstudio.com/items?itemName=meganrogge.template-string-converter) - 这个节省了我不少编码时间,简直必备~
++ [Package.json Helper](https://marketplace.visualstudio.com/items?itemName=Dang.package-json-helper) - 可以快速定位到包的位置以及npm的仓库位置,省了不少时间
++ [CSS Initial Value](https://marketplace.visualstudio.com/items?itemName=dzhavat.css-initial-value) - 用来感知css默认样式,大大节省了时间,有些时候不用特意跑去MDN
++ [Colorful Comments](https://marketplace.visualstudio.com/items?itemName=ParthR2031.colorful-comments) - 这个很有意思,可以自定义高亮关键字,也天然支持TODO
 
 
 
