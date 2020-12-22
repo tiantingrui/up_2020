@@ -169,5 +169,243 @@ setup() {
 
 
 
+### watch
+
+```js
+// watch 简单应用
+watch(data, () => {
+  document.title = 'updated ' + data.count
+})
+// watch 的两个参数，代表新的值和旧的值
+watch(refData.count, (newValue, oldValue) => {
+  console.log('old', oldValue)
+  console.log('new', newValue)
+  document.title = 'updated ' + data.count
+})
+
+// watch 多个值，返回的也是多个值的数组
+watch([greetings, data], (newValue, oldValue) => {
+  console.log('old', oldValue)
+  console.log('new', newValue)
+  document.title = 'updated' + greetings.value + data.count
+})
+
+// 使用 getter 的写法 watch reactive 对象中的一项
+watch([greetings, () => data.count], (newValue, oldValue) => {
+  console.log('old', oldValue)
+  console.log('new', newValue)
+  document.title = 'updated' + greetings.value + data.count
+})
+```
+
+
+
+### 自定义 hook
+
+封装一个用户鼠标点击页面的位置
+
++ ref 方法的实现
+
+```ts
+// hooks/useMouseTracker
+
+import {ref} from 'vue'
+
+export default function useMouseTracker() {
+  const x = ref(0)
+  const y = ref(0)
+  const updatePosition = (e: MouseEvent) => {
+    x.value = e.pageX
+    y.value = e.pageY
+  }
+  onMount(() => {
+    documnet.addEventListener('click', updatePosition)
+  })
+  onUnMount(() => {
+    document.removeEventListener('click', updatePosition)
+  })
+  return {x, y}
+}
+```
+
++ reactive & toRefs 实现
+
+```ts
+import { onMounted, onUnmounted, reactive, toRefs} from 'vue'
+
+// 将组件内逻辑抽象成复用的函数
+export default function useMouseTracker() {
+    const data = reactive({
+        x: 0,
+        y: 0
+    })
+    const updatePosition = (e: MouseEvent) => {
+        data.x = e.pageX
+        data.y = e.pageY
+    }
+    onMounted(() => {
+        document.addEventListener('click', updatePosition)
+    })
+    onUnmounted(() => {
+        document.removeEventListener('click', updatePosition)
+    })
+    const refsData = toRefs(data)
+    return {
+        ...refsData
+    }
+}
+```
+
+
+
+### useUrlLoader
+
+需求：异步获取一张图片
+
+api链接：https://dog.ceo/api/breeds/image/random
+
+返回数据结构
+
+```json
+{
+    "message": "https://images.dog.ceo/breeds/coonhound/n02089078_243.jpg",
+    "status": "success"
+}
+```
+
+安装axios 
+
+```sh
+npm install axios --save
+```
+
+实现自定义hook
+
+```ts
+// hooks/useUrlLoader.ts
+import {ref} from 'vue'
+import axios from 'axios'
+
+export default function useUrlLoader(url: string) {
+  const result = ref(null)
+  const loading = ref(true)
+  const loaded = ref(true)
+  const error = ref(null)
+  
+  axios.get(url)
+  	   .then((rawData) => {
+    			loading.value = false
+    			loaded.value = true
+    			result.value = rawData.data
+  			})
+  			.catch(e => {
+    			error.value = e
+    			loading.value = false
+  			})
+  
+  return {
+    result,
+    loaded,
+    loading,
+    error
+  }
+}
+```
+
+
+
+```vue
+// App.vue
+import useUrlLoader from './hooks/useUrlLoader'
+
+export default {
+  setup() {
+    const {result, loaded, loading} = useUrlLoader()
+    
+    return {result, loaded, loading}
+  }
+}
+
+// html
+<h1 v-if="loading"> img is Loading...</h1>
+<img v-if="loaded" :src="result.message">
+```
+
+
+
+### 模块化结合typescript - 泛型改造
+
+```ts
+// 为函数添加泛型
+function useUrlLoader<T>(url: string) {
+  const result = ref<T | null>(null)
+}
+
+// 在应用中的使用，可以定义不同的数据类型
+interface DogResult {
+  message: string;
+  status: string;
+}
+
+interface CatResult {
+  id: string;
+  url: string;
+  height: number;
+  width: number
+}
+
+// 免费猫图片的 API  https://api.thecatapi.com/v1/images/search?limit=1
+const { result, loading, loaded } = useURLLoader<CatResult[]>('https://api.thecatapi.com/v1/images/search?limit=1')
+
+```
+
+
+
+#### Vue2遇到的难题
+
++ Vue2 对于 typescript 的支持非常的有限
+
+
+
+### 使用 defineComponent 包裹组件
+
+defineComponent是一个函数，接受一个对象，使其有ts type 检测以及 vue3 的语法提示
+
+
+
+### Teleport - 瞬间移动
+
+
+
+
+
+### emit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
